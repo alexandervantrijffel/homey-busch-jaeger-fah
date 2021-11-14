@@ -1,0 +1,35 @@
+{
+  "title": {
+    "en": "Set datapoint"
+  },
+  "args": [
+    {
+      "type": "text",
+      "name": "device-serial",
+      "placeholder": {
+        "en": "Device serial ID"
+      }
+    },
+    {
+      "type": "text",
+      "name": "channel",
+      "placeholder": {
+        "en": "ch0000"
+      }
+    },
+    {
+      "type": "text",
+      "name": "datapoint",
+      "placeholder": {
+        "en": "idp0000"
+      }
+    },
+    {
+      "type": "number",
+      "name": "value",
+      "placeholder": {
+        "en": "0"
+      }
+    }
+  ]
+}
