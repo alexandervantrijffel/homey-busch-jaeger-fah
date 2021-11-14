@@ -3,19 +3,14 @@
   "version": "1.0.0",
   "compatibility": ">=5.0.0",
   "sdk": 3,
-  "platforms": [
-    "local",
-    "cloud"
-  ],
+  "platforms": ["local", "cloud"],
   "name": {
     "en": "Busch Jaeger free@home"
   },
   "description": {
     "en": "Busch Jaeger free@home"
   },
-  "category": [
-    "appliances"
-  ],
+  "category": ["appliances"],
   "permissions": [],
   "images": {
     "small": "/assets/images/small.png",
@@ -25,5 +20,8 @@
   "author": {
     "name": "Alexander Van Trijffel",
     "email": "lexmail@gmail.com"
-  }
+  },
+  "HOMEY_LOG_FORCE": "0",
+  "HOMEY_LOG_URL": "https://ce92beb6950344ad9a2e5541b3b09d01@o73136.ingest.sentry.io/6063538"
 }
+

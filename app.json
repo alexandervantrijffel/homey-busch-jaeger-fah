@@ -26,5 +26,47 @@
   "author": {
     "name": "Alexander Van Trijffel",
     "email": "lexmail@gmail.com"
+  },
+  "HOMEY_LOG_FORCE": "0",
+  "HOMEY_LOG_URL": "https://ce92beb6950344ad9a2e5541b3b09d01@o73136.ingest.sentry.io/6063538",
+  "flow": {
+    "actions": [
+      {
+        "title": {
+          "en": "Set datapoint"
+        },
+        "args": [
+          {
+            "type": "text",
+            "name": "device-serial",
+            "placeholder": {
+              "en": "Device serial ID"
+            }
+          },
+          {
+            "type": "text",
+            "name": "channel",
+            "placeholder": {
+              "en": "ch0000"
+            }
+          },
+          {
+            "type": "text",
+            "name": "datapoint",
+            "placeholder": {
+              "en": "idp0000"
+            }
+          },
+          {
+            "type": "number",
+            "name": "value",
+            "placeholder": {
+              "en": "0"
+            }
+          }
+        ],
+        "id": "set-datapoint"
+      }
+    ]
   }
 }

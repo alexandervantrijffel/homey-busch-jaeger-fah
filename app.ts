@@ -1,14 +1,14 @@
-import Homey from 'homey';
+import Homey from "homey";
+// import { Log } from "homey-log";
 
-class MyApp extends Homey.App {
-
+class BuschJaegerFAH extends Homey.App {
   /**
    * onInit is called when the app is initialized.
    */
   async onInit() {
-    this.log('MyApp has been initialized');
+    // this.homeyLog = new Log({ homey: this.homey });
+    this.log("The app has been initialized");
   }
-
 }
 
-module.exports = MyApp;
+module.exports = BuschJaegerFAH;
