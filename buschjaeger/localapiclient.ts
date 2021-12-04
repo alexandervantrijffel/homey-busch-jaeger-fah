@@ -1,6 +1,7 @@
 import { Readable } from "stream";
 import axios, { AxiosResponse } from "axios";
 import log from "../log";
+import util from "util";
 
 export interface SysApConnection {
   baseUrl: string;
@@ -37,55 +38,73 @@ export interface Device {
 
 const restApiRootUrl = "fhapi/v1/api/rest";
 
-export const ListDevices = async (
-  conn: SysApConnection,
-  search?: string
-): Promise<Device[]> => {
-  const requestUrl = `${conn.baseUrl}/${restApiRootUrl}/configuration`;
+export const ListDevices = async (conn: SysApConnection): Promise<Device[]> => {
+  const axiosOptions = {
+    baseURL: `${conn.baseUrl}/${restApiRootUrl}`,
+    timeout: 10000,
+    headers: {
+      Accept: "*/*",
+      "Content-Type": "application/json;charset=utf-8",
+      Authorization: authHeader(conn),
+    },
+  };
+  const axiosInstance = axios.create(axiosOptions);
 
-  const response = await axios
-    .get(requestUrl, {
-      headers: {
-        Authorization: authHeader(conn),
-      },
-    })
-    .then((res: AxiosResponse) => res.data)
-    .catch((error) => {
-      log.error(`Request failed`, { error });
-    });
+  const response = await axiosInstance.get("/configuration");
+  const sysApId = Object.keys(response.data)[0];
+  const { devices } = response.data[sysApId];
 
-  const searchRegexp = search && new RegExp(search.trim(), "i");
-
-  const sysApId = Object.keys(response)[0];
-  const { devices } = response[sysApId];
-
-  const mapped = Object.keys(devices)
-    .map((deviceId) => {
-      const device = devices[deviceId];
-      return {
-        deviceId,
-        name: device.displayName,
-        channels: Object.keys(device.channels).map((channelId) => {
-          const channel = device.channels[channelId];
-          return {
-            channelId,
-            displayName: channel.displayName,
-            inputs: Object.keys(channel.inputs).map((inputId) => {
-              const input = channel.inputs[inputId];
-              return { inputId, value: String(input.value) };
-            }),
-          };
-        }),
-      };
-    })
-    .filter(
-      (d) =>
-        !searchRegexp ||
-        d.deviceId.match(searchRegexp) ||
-        d.name.match(searchRegexp) ||
-        d.channels.some((ch) => ch.displayName.match(searchRegexp))
-    );
+  const mapped = Object.keys(devices).map((deviceId) => {
+    const device = devices[deviceId];
+    return {
+      deviceId,
+      name: device.displayName,
+      channels: Object.keys(device.channels).map((channelId) => {
+        const channel = device.channels[channelId];
+        return {
+          channelId,
+          displayName: channel.displayName,
+          inputs: Object.keys(channel.inputs).map((inputId) => {
+            const input = channel.inputs[inputId];
+            return { inputId, value: String(input.value) };
+          }),
+        };
+      }),
+    };
+  });
   return mapped;
+};
+
+interface ChannelInput extends Omit<Device, "channels"> {
+  channel: Channel;
+}
+
+export const MapChannels = (devices: Device[]): ChannelInput[] => {
+  return devices.flatMap((d) => {
+    return d.channels.map((c) => {
+      return {
+        name: d.name + (c.displayName === d.name ? "" : ` - ${c.displayName}`),
+        deviceId: d.deviceId,
+        channel: c,
+      };
+    });
+  });
+};
+
+export const Search = (
+  channels: ChannelInput[],
+  search?: string
+): ChannelInput[] => {
+  console.log("filtering", search);
+  if (!search) return channels;
+  const searchRegexp = new RegExp(search.trim(), "i");
+  return channels.filter(
+    (c) =>
+      !searchRegexp ||
+      c.deviceId.match(searchRegexp) ||
+      c.name.match(searchRegexp) ||
+      c.channel.displayName.match(searchRegexp)
+  );
 };
 
 export const SetDatapoint = async (
