@@ -1,0 +1,40 @@
+<div>Note: make sure that Local API is activated at settings &gt; Local API in the Free@home app</div>
+<br/>
+<div>Hostname or IP address of the System Access Point</div>
+<div> <input type="text" id="hostname"/></div>
+<div>Local API username:</div>
+<div> <input type="text" id="username"/></div>
+<div>Password:</div>
+<div> <input type="text" id="password"/></div>
+<br/>
+<div> <button type="default" onclick="onNext()" >Finish</button></div>
+
+<script type="application/javascript">
+
+  // example view:
+  // https://github.com/loqed-nl/homey-app/blob/master/drivers/touch-smart-lock/pair/create_hooks.html
+
+  Homey.setTitle("System Access Point attributes");
+
+  function onNext() {
+    var data = { 
+        hostname: document.getElementById("hostname").value,
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value
+    }
+    console.log('emitting event',data)
+
+    Homey.emit("get_create_device_object", data).then(function (result) {
+      console.log('received result', result); // result is: Hello!
+      Homey.createDevice(result)
+        .then(function (_result) {
+          Homey.done();
+        })
+        .catch(function (error) {
+          Homey.alert(err);
+        });
+    }); 
+  }
+</script>
+
+
